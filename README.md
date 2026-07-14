@@ -2,7 +2,7 @@
 
 A simplified Monopoly game playable in the browser, with real-time multiplayer via WebSockets.
 
-- **Backend**: Python 3.11 · FastAPI · Uvicorn
+- **Backend**: Python 3.14 · FastAPI · Uvicorn · Starlette
 - **Frontend**: React 18 · TypeScript · Vite
 
 ---
@@ -18,7 +18,8 @@ A simplified Monopoly game playable in the browser, with real-time multiplayer v
 | **Buy** | Landing on an unowned property → bought automatically if affordable |
 | **Rent** | Landing on an opponent's property → rent paid to the owner |
 | **Bankruptcy** | Can't pay rent → bankrupt; properties transferred to creditor |
-| **Win condition** | Last player standing |
+| **Player quit** | Leaving mid-game → marked as out; last player standing wins by default |
+| **Win condition** | Last non-bankrupt player standing |
 
 ---
 
@@ -26,7 +27,7 @@ A simplified Monopoly game playable in the browser, with real-time multiplayer v
 
 | Tool | Version |
 |---|---|
-| Python | ≥ 3.11 |
+| Python | ≥ 3.14 |
 | Node.js | ≥ 18 |
 | npm | ≥ 9 |
 
@@ -38,6 +39,7 @@ A simplified Monopoly game playable in the browser, with real-time multiplayer v
 
 ```bash
 cd backend
+python -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
 uvicorn main:app --reload --port 8000
 ```
@@ -59,16 +61,25 @@ The app is now available at <http://localhost:5173>.
 
 > Vite automatically proxies `/api/*` requests (including WebSockets) to `http://localhost:8000`, so no CORS configuration is needed during development.
 
+### 3 — Tests
+
+```bash
+cd backend
+python -m pytest tests/ -v
+```
+
 ---
 
 ## How to play
 
 1. **Create a game** — Enter your name and click *Create Game*.
-2. **Share** — Copy the 6-character code or the join link and send it to your friends (2–4 players total).
-3. **Join** — Each other player opens the link (or goes to the app and uses the code).
-4. **Start** — The host clicks *Start Game* once everyone has joined.
-5. **Take turns** — Click **🎲 Roll Dice** when it's your turn. The action log on the right keeps everyone informed.
+2. **Share** — Copy the 6-character join code or the invite link and send it to friends (2–4 players).
+3. **Join** — Each other player opens the link or enters the code manually on the lobby page.
+4. **Start** — The host clicks *🚀 Start Game* once at least 2 players have joined. The button grows and glows green when ready.
+5. **Take turns** — Click **🎲 Roll Dice** when it's your turn. The action log keeps everyone informed.
 6. **Win** — Be the last player standing!
+
+> **Note:** The *Join Game* tab is disabled when no game is currently waiting — it enables automatically once a game is created.
 
 ---
 
@@ -77,20 +88,40 @@ The app is now available at <http://localhost:5173>.
 ```
 canex/
 ├── backend/
-│   ├── game.py          # Game logic (board, players, rules)
-│   ├── main.py          # FastAPI app, REST + WebSocket endpoints
-│   └── requirements.txt
+│   ├── main.py                        # App factory — lifespan, middleware, routers
+│   ├── requirements.txt
+│   ├── app/
+│   │   ├── api/
+│   │   │   ├── dependencies.py        # Annotated dependency aliases (StoreDep, ManagerDep)
+│   │   │   └── routes/
+│   │   │       ├── games.py           # REST endpoints (create, join, list, get)
+│   │   │       └── ws.py              # WebSocket endpoint + message handlers
+│   │   ├── core/
+│   │   │   ├── config.py              # Centralised game settings (money, board, limits)
+│   │   │   └── exceptions.py          # Typed domain exceptions
+│   │   ├── models/
+│   │   │   ├── player.py              # Player domain model
+│   │   │   ├── game.py                # Game domain model + board definition
+│   │   │   └── schemas.py             # Pydantic schemas (request/response)
+│   │   └── services/
+│   │       ├── game_store.py          # In-memory game repository
+│   │       └── connection_manager.py  # WebSocket room management
+│   └── tests/
+│       ├── conftest.py
+│       ├── test_game.py
+│       ├── test_game_store.py
+│       └── test_api.py
 └── frontend/
     ├── src/
-    │   ├── App.tsx                        # Root — session management, routing
-    │   ├── types.ts                       # Shared TypeScript types
+    │   ├── App.tsx                    # Root — session management, routing
+    │   ├── types.ts                   # Shared TypeScript interfaces
     │   ├── hooks/
-    │   │   └── useGameWebSocket.ts        # WS hook (connect, reconnect, send)
+    │   │   └── useGameWebSocket.ts    # WS hook (connect, reconnect, send)
     │   └── components/
-    │       ├── LobbyPage.tsx              # Create / Join forms
-    │       ├── GamePage.tsx               # Waiting room + playing screen
-    │       ├── Board.tsx                  # 7×7 CSS-grid board
-    │       └── PlayerCard.tsx             # Per-player status card
+    │       ├── LobbyPage.tsx          # Create / Join forms
+    │       ├── GamePage.tsx           # Waiting room + playing + end screen
+    │       ├── Board.tsx              # CSS-grid board
+    │       └── PlayerCard.tsx         # Per-player status card
     ├── package.json
     └── vite.config.ts
 ```
@@ -101,6 +132,7 @@ canex/
 
 - **State is in-memory** on the server — restarting the backend clears all games. A production version would use Redis or a database.
 - **WebSocket broadcast** — every player action triggers a full state push to all connected clients in that game room.
-- **Reconnection** — the WS hook auto-retries every 2 s on network drops; session info (game_id + player_id) is stored in `localStorage` so a page refresh reconnects the player seamlessly.
+- **Reconnection** — the WS hook auto-retries every 2 s on network drops; session info (`game_id` + `player_id`) is stored in `sessionStorage` (tab-scoped) so a page refresh reconnects seamlessly.
+- **Join codes** — generated with `secrets.choice` (CSPRNG), giving ~2.2 billion combinations for a 6-character alphanumeric code.
+- **Dependency injection** — FastAPI dependencies use the `Annotated` pattern (`StoreDep`, `ManagerDep`) defined once in `app/api/dependencies.py`.
 - **No auth** — player identity is a UUID assigned at join time. A production version would add proper authentication.
-
