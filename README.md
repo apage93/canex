@@ -68,6 +68,35 @@ cd backend
 python -m pytest tests/ -v
 ```
 
+Run with coverage:
+
+```bash
+python -m pytest tests/ --cov=app --cov=main --cov-report=term-missing
+```
+
+---
+
+## Test coverage
+
+> 73 tests · **92% overall coverage**
+
+| Module | Stmts | Cover |
+|---|---|---|
+| `app/api/dependencies.py` | 11 | **100%** |
+| `app/api/routes/games.py` | 37 | **97%** |
+| `app/core/config.py` | 8 | **100%** |
+| `app/core/exceptions.py` | 27 | 93% |
+| `app/models/player.py` | 13 | **100%** |
+| `app/models/game.py` | 117 | 91% |
+| `app/models/schemas.py` | 15 | **100%** |
+| `app/services/connection_manager.py` | 25 | 88% |
+| `app/services/game_store.py` | 35 | **97%** |
+| `app/api/routes/ws.py` | 68 | 82% |
+| `main.py` | 28 | 93% |
+| **Total** | **384** | **92%** |
+
+The WebSocket route (`ws.py`) has the lowest coverage (82%) because the leave/disconnect paths are harder to exercise in the test client — they are covered by integration tests but not every branch combination.
+
 ---
 
 ## How to play
