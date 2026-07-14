@@ -77,9 +77,9 @@ class Game:
         return player
 
     def start(self, requesting_player_id: str) -> None:
-        host = next((p for p in self.players if p.is_host), None)
-        if not host or host.id != requesting_player_id:
+        if not any(p.is_host and p.id == requesting_player_id for p in self.players):
             raise NotHostError()
+        # Should not happen because of the front but just in case..
         if len(self.players) < settings.MIN_PLAYERS_TO_START:
             raise NotEnoughPlayersError(settings.MIN_PLAYERS_TO_START)
         random.shuffle(self.players)
