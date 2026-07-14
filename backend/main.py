@@ -16,6 +16,7 @@ from typing import AsyncIterator
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+from starlette.middleware import Middleware
 
 from app.core.exceptions import GameNotFoundError, MonopolyError
 from app.api.routes import games as games_router
@@ -43,15 +44,15 @@ def create_app() -> FastAPI:
         description="Real-time multiplayer Monopoly — FastAPI + WebSocket",
         version="1.0.0",
         lifespan=lifespan,
-    )
-
-    # ── Middleware ─────────────────────────────────────────────────────────────
-    app.add_middleware(
-        CORSMiddleware,
-        allow_origins=["*"],
-        allow_credentials=True,
-        allow_methods=["*"],
-        allow_headers=["*"],
+        middleware=[
+            Middleware(
+                CORSMiddleware,  # type: ignore[arg-type]
+                allow_origins=["*"],
+                allow_credentials=True,
+                allow_methods=["*"],
+                allow_headers=["*"],
+            ),
+        ],
     )
 
     # ── Exception handlers ────────────────────────────────────────────────────
