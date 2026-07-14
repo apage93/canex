@@ -146,7 +146,7 @@ export default function GamePage({ session, onLeave, onInvalidSession }: Props) 
               style={{ background: 'var(--surface2)', color: 'var(--text)', fontSize: '0.8rem', padding: '0.4rem 0.8rem' }}
               title="Ouvre un nouvel onglet avec le formulaire de join pré-rempli"
             >
-              ↗ Nouvel onglet
+              ↗ Ajouter un joueur
             </button>
           </div>
         </div>
