@@ -49,6 +49,14 @@ class PlayerOut(BaseModel):
     is_host: bool
 
 
+class LobbyGameOut(BaseModel):
+    """Minimal info shown in the lobby list."""
+    game_id: str
+    join_code: str
+    player_count: int
+    host_name: str
+
+
 class GameStateOut(BaseModel):
     game_id: str
     join_code: str

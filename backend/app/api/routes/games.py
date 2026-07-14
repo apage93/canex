@@ -14,12 +14,29 @@ from app.models.schemas import (
     CreateGameRequest,
     GameStateOut,
     JoinGameRequest,
+    LobbyGameOut,
     SessionResponse,
 )
 from app.services.connection_manager import ConnectionManager
 from app.services.game_store import GameStore
 
 router = APIRouter(prefix="/api/games", tags=["games"])
+
+
+@router.get("", response_model=list[LobbyGameOut])
+async def list_games(
+    store: GameStore = Depends(get_store),
+) -> list[LobbyGameOut]:
+    """Return all games currently waiting for players."""
+    return [
+        LobbyGameOut(
+            game_id=g.game_id,
+            join_code=g.join_code,
+            player_count=len(g.players),
+            host_name=next(p.name for p in g.players if p.is_host),
+        )
+        for g in store.list_waiting()
+    ]
 
 
 @router.post("", response_model=SessionResponse, status_code=201)

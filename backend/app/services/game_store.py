@@ -37,6 +37,10 @@ class GameStore:
             raise GameNotFoundError(game_id)
         return game
 
+    def list_waiting(self) -> list[Game]:
+        """Return all games currently in 'waiting' status."""
+        return [g for g in self._games.values() if g.status == "waiting"]
+
     def get_by_code(self, join_code: str) -> Game:
         """Case-insensitive lookup by join code."""
         code = join_code.upper()

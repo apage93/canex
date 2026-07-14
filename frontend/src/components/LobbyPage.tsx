@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { SessionInfo } from '../types';
 
 interface Props {
@@ -10,6 +10,14 @@ type Tab = 'create' | 'join';
 
 export default function LobbyPage({ initialCode, onJoined }: Props) {
   const [tab, setTab] = useState<Tab>(initialCode ? 'join' : 'create');
+  const [hasWaitingGames, setHasWaitingGames] = useState(!!initialCode);
+
+  useEffect(() => {
+    fetch('/api/games')
+      .then((r) => r.json())
+      .then((games: unknown[]) => setHasWaitingGames(games.length > 0))
+      .catch(() => setHasWaitingGames(false));
+  }, []);
 
   // Create game form
   const [createName, setCreateName] = useState('');
@@ -110,6 +118,7 @@ export default function LobbyPage({ initialCode, onJoined }: Props) {
             <button
               key={t}
               onClick={() => setTab(t)}
+              disabled={t === 'join' && !hasWaitingGames}
               style={{
                 flex: 1,
                 background: tab === t ? 'var(--accent)' : 'transparent',
@@ -183,7 +192,7 @@ export default function LobbyPage({ initialCode, onJoined }: Props) {
             )}
             <button
               type="submit"
-              disabled={!joinCode.trim() || !joinName.trim() || joinLoading}
+              disabled={joinCode.trim().length < 6 || !joinName.trim() || joinLoading}
               style={{ background: 'var(--accent)', color: '#fff', padding: '0.75rem' }}
             >
               {joinLoading ? 'Joining…' : 'Join Game'}
