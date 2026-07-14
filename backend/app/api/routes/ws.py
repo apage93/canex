@@ -1,12 +1,13 @@
 """WebSocket endpoint — real-time game communication."""
 
-from fastapi import APIRouter, Depends, Query, WebSocket, WebSocketDisconnect
+from typing import Annotated
 
-from dependencies import get_manager, get_store
+from fastapi import APIRouter, Query, WebSocket, WebSocketDisconnect
+
+from dependencies import ManagerDep, StoreDep
 from exceptions import (
     GameNotFoundError,
     MonopolyError,
-    PlayerNotFoundError,
 )
 from app.services.connection_manager import ConnectionManager
 from app.services.game_store import GameStore
@@ -18,9 +19,9 @@ router = APIRouter(tags=["websocket"])
 async def game_websocket(
     websocket: WebSocket,
     game_id: str,
-    player_id: str = Query(...),
-    store: GameStore = Depends(get_store),
-    manager: ConnectionManager = Depends(get_manager),
+    player_id: Annotated[str, Query(...)],
+    store: StoreDep,
+    manager: ManagerDep,
 ) -> None:
     # ── Validate before accepting ──────────────────────────────────────────────
     try:
@@ -115,4 +116,3 @@ async def _handle_roll(
         await manager.broadcast_state(game.game_id, game.to_dict())
     except MonopolyError as exc:
         await manager.send_error(ws, str(exc))
-

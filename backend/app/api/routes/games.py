@@ -1,10 +1,11 @@
 """REST endpoints for game management."""
 
 import uuid
+from typing import Annotated
 
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, HTTPException, Query
 
-from dependencies import get_manager, get_store
+from dependencies import ManagerDep, StoreDep
 from exceptions import (
     GameAlreadyStartedError,
     GameFullError,
@@ -17,15 +18,13 @@ from app.models.schemas import (
     LobbyGameOut,
     SessionResponse,
 )
-from app.services.connection_manager import ConnectionManager
-from app.services.game_store import GameStore
 
 router = APIRouter(prefix="/api/games", tags=["games"])
 
 
 @router.get("", response_model=list[LobbyGameOut])
 async def list_games(
-    store: GameStore = Depends(get_store),
+    store: StoreDep,
 ) -> list[LobbyGameOut]:
     """Return all games currently waiting for players."""
     return [
@@ -42,7 +41,7 @@ async def list_games(
 @router.post("", response_model=SessionResponse, status_code=201)
 async def create_game(
     body: CreateGameRequest,
-    store: GameStore = Depends(get_store),
+    store: StoreDep,
 ) -> SessionResponse:
     """Create a new game. The creator automatically becomes the host."""
     host_id = str(uuid.uuid4())
@@ -58,9 +57,9 @@ async def create_game(
 @router.post("/join", response_model=SessionResponse, status_code=200)
 async def join_game(
     body: JoinGameRequest,
-    code: str = Query(..., min_length=1),
-    store: GameStore = Depends(get_store),
-    manager: ConnectionManager = Depends(get_manager),
+    code: Annotated[str, Query(min_length=1)],
+    store: StoreDep,
+    manager: ManagerDep,
 ) -> SessionResponse:
     """Join an existing game by its join code."""
     try:
@@ -91,7 +90,7 @@ async def join_game(
 @router.get("/{game_id}", response_model=GameStateOut)
 async def get_game_state(
     game_id: str,
-    store: GameStore = Depends(get_store),
+    store: StoreDep,
 ) -> dict:
     """Return the current state of a game (useful for debugging / reconnection)."""
     try:
@@ -99,4 +98,3 @@ async def get_game_state(
     except GameNotFoundError:
         raise HTTPException(status_code=404, detail="Game not found")
     return game.to_dict()
-
