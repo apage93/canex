@@ -5,7 +5,7 @@ never touches a raw dict. Swapping to Redis or a database only requires
 replacing this file.
 """
 
-import random
+import secrets
 import string
 import uuid
 
@@ -58,7 +58,7 @@ class GameStore:
         existing = {g.join_code for g in self._games.values()}
         while True:
             code = "".join(
-                random.choices(alphabet, k=settings.JOIN_CODE_LENGTH)
+                secrets.choice(alphabet) for _ in range(settings.JOIN_CODE_LENGTH)
             )
             if code not in existing:
                 return code
