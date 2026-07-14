@@ -4,8 +4,8 @@ from typing import Annotated
 
 from fastapi import APIRouter, Query, WebSocket, WebSocketDisconnect
 
-from dependencies import ManagerDep, StoreDep
-from exceptions import (
+from app.api.dependencies import ManagerDep, StoreDep
+from app.core.exceptions import (
     GameNotFoundError,
     MonopolyError,
 )

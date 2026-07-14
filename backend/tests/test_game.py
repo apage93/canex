@@ -4,7 +4,7 @@ import pytest
 from unittest.mock import patch
 
 from app.core.config import settings
-from exceptions import (
+from app.core.exceptions import (
     GameAlreadyStartedError,
     GameFullError,
     GameNotInProgressError,

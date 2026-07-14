@@ -2,7 +2,7 @@
 
 import pytest
 
-from exceptions import GameNotFoundError
+from app.core.exceptions import GameNotFoundError
 from app.services.game_store import GameStore
 
 

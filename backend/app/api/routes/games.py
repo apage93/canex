@@ -5,8 +5,8 @@ from typing import Annotated
 
 from fastapi import APIRouter, HTTPException, Query
 
-from dependencies import ManagerDep, StoreDep
-from exceptions import (
+from app.api.dependencies import ManagerDep, StoreDep
+from app.core.exceptions import (
     GameAlreadyStartedError,
     GameFullError,
     GameNotFoundError,

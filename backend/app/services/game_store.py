@@ -10,7 +10,7 @@ import string
 import uuid
 
 from app.core.config import settings
-from exceptions import GameNotFoundError
+from app.core.exceptions import GameNotFoundError
 from app.models.game import Game
 
 

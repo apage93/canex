@@ -17,7 +17,7 @@ from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
-from exceptions import GameNotFoundError, MonopolyError
+from app.core.exceptions import GameNotFoundError, MonopolyError
 from app.api.routes import games as games_router
 from app.api.routes import ws as ws_router
 from app.services.connection_manager import ConnectionManager

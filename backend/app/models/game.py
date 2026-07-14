@@ -5,7 +5,7 @@ from typing import Optional
 
 from app.core.config import settings
 from app.models.player import Player
-from exceptions import (
+from app.core.exceptions import (
     GameAlreadyStartedError,
     GameFullError,
     GameNotInProgressError,
