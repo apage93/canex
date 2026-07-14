@@ -24,6 +24,7 @@ export default function GamePage({ session, onLeave, onInvalidSession }: Props) 
     onLeave();
   }, [gameState?.status, send, onLeave]);
 
+  const [actionLog, setActionLog] = useState<string[]>([]);
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
