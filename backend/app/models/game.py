@@ -94,6 +94,7 @@ class Game:
             raise GameNotInProgressError()
 
         current = self.players[self.current_player_index]
+        # Should not happen because of the front but just in case..
         if current.id != requesting_player_id:
             raise NotYourTurnError()
 
