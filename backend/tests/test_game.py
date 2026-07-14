@@ -62,7 +62,7 @@ class TestPlayer:
     def test_to_dict_keys(self):
         p = Player("id", "Alice")
         d = p.to_dict()
-        assert set(d) == {"id", "name", "money", "position", "properties", "is_bankrupt", "is_host"}
+        assert set(d) == {"id", "name", "money", "position", "properties", "is_bankrupt", "has_quit", "is_host"}
 
 
 # ═══════════════════════════════════════════════════════════════════════════════

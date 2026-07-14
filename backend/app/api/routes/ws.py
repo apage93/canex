@@ -62,23 +62,34 @@ async def game_websocket(
             elif msg_type == "roll_dice":
                 await _handle_roll(websocket, game, player_id, manager)
 
+            elif msg_type == "leave_game":
+                await _handle_leave(websocket, game, player_id, manager)
+                break
+
             # Unknown message types are silently ignored (forward-compat).
 
     except WebSocketDisconnect:
         manager.disconnect(game_id, websocket)
-        # If the game is in progress, mark the disconnected player as bankrupt
-        # and check if only one player remains.
-        if game.status == "playing":
-            player_obj = game.get_player(player_id)
-            if player_obj and not player_obj.is_bankrupt:
-                player_obj.is_bankrupt = True
-                player_obj.has_quit = True
-                game.last_action = f"{player_obj.name} logout."
-                game.check_last_player_wins()
-            await manager.broadcast_state(game_id, game.to_dict())
 
 
 # ── Handlers ──────────────────────────────────────────────────────────────────
+
+async def _handle_leave(
+    ws: WebSocket,
+    game,
+    player_id: str,
+    manager: ConnectionManager,
+) -> None:
+    manager.disconnect(game.game_id, ws)
+    if game.status == "playing":
+        player_obj = game.get_player(player_id)
+        if player_obj and not player_obj.is_bankrupt:
+            player_obj.is_bankrupt = True
+            player_obj.has_quit = True
+            game.last_action = f"{player_obj.name} a quitté la partie."
+            game.check_last_player_wins()
+        await manager.broadcast_state(game.game_id, game.to_dict())
+
 
 async def _handle_start(
     ws: WebSocket,

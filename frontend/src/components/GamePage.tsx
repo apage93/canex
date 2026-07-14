@@ -17,7 +17,13 @@ export default function GamePage({ session, onLeave, onInvalidSession }: Props) 
     onInvalidSession,
   );
 
-  const [actionLog, setActionLog] = useState<string[]>([]);
+  const handleLeave = useCallback(() => {
+    if (gameState?.status === 'playing') {
+      send({ type: 'leave_game' });
+    }
+    onLeave();
+  }, [gameState?.status, send, onLeave]);
+
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
@@ -100,7 +106,7 @@ export default function GamePage({ session, onLeave, onInvalidSession }: Props) 
           })}
         </div>
 
-        <button onClick={onLeave} style={{ background: 'var(--accent)', color: '#fff', padding: '0.75rem 2rem' }}>
+        <button onClick={handleLeave} style={{ background: 'var(--accent)', color: '#fff', padding: '0.75rem 2rem' }}>
           Back to Lobby
         </button>
       </div>
@@ -193,7 +199,7 @@ export default function GamePage({ session, onLeave, onInvalidSession }: Props) 
         )}
 
         <button
-          onClick={onLeave}
+          onClick={handleLeave}
           style={{ background: 'transparent', color: 'var(--text-muted)', marginTop: '1rem', fontSize: '0.8rem' }}
         >
           Leave
@@ -237,7 +243,7 @@ export default function GamePage({ session, onLeave, onInvalidSession }: Props) 
             {connected ? '🟢' : '🔴'}
           </span>
           <button
-            onClick={onLeave}
+            onClick={handleLeave}
             style={{ background: 'transparent', color: 'var(--text-muted)', padding: '0.3rem 0.6rem', fontSize: '0.8rem' }}
           >
             Leave
