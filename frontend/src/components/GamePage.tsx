@@ -25,7 +25,7 @@ export default function GamePage({ session, onLeave, onInvalidSession }: Props) 
   }, [gameState?.status, send, onLeave]);
 
   const [actionLog, setActionLog] = useState<string[]>([]);
-  const [copied, setCopied] = useState(false);
+  const [setCopied] = useState(false);
 
   useEffect(() => {
     if (gameState?.last_action) {
