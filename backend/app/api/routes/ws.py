@@ -71,6 +71,9 @@ async def game_websocket(
 
     except WebSocketDisconnect:
         manager.disconnect(game_id, websocket)
+        if game.status == "waiting":
+            _remove_from_lobby(game, player_id)
+            await manager.broadcast_state(game_id, game.to_dict())
 
 
 # ── Handlers ──────────────────────────────────────────────────────────────────
@@ -82,14 +85,21 @@ async def _handle_leave(
     manager: ConnectionManager,
 ) -> None:
     manager.disconnect(game.game_id, ws)
-    if game.status == "playing":
+    if game.status == "waiting":
+        _remove_from_lobby(game, player_id)
+    elif game.status == "playing":
         player_obj = game.get_player(player_id)
         if player_obj and not player_obj.is_bankrupt:
             player_obj.is_bankrupt = True
             player_obj.has_quit = True
-            game.last_action = f"{player_obj.name} logged out."
+            game.last_action = f"{player_obj.name} a quitté la partie."
             game.check_last_player_wins()
-        await manager.broadcast_state(game.game_id, game.to_dict())
+    await manager.broadcast_state(game.game_id, game.to_dict())
+
+
+def _remove_from_lobby(game, player_id: str) -> None:
+    """Remove a non-host player from the lobby."""
+    game.players = [p for p in game.players if p.id != player_id]
 
 
 async def _handle_start(

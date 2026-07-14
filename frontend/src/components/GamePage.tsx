@@ -187,13 +187,27 @@ export default function GamePage({ session, onLeave, onInvalidSession }: Props) 
         </div>
 
         {isHost && (
-          <button
-            onClick={handleStart}
-            disabled={players.length < 2}
-            style={{ background: 'var(--accent)', color: '#fff', padding: '0.75rem 2rem', fontSize: '1rem' }}
-          >
-            🚀 Start Game
-          </button>
+          <>
+            <button
+              onClick={handleStart}
+              disabled={players.length < 2}
+              style={{
+                background: players.length >= 2 ? 'var(--accent)' : 'var(--surface2)',
+                color: '#fff',
+                padding: players.length >= 2 ? '1rem 3rem' : '0.75rem 2rem',
+                fontSize: players.length >= 2 ? '1.2rem' : '1rem',
+                boxShadow: players.length >= 2 ? '0 0 20px rgba(34,197,94,0.4)' : 'none',
+                transition: 'all 0.3s',
+              }}
+            >
+              🚀 Start Game
+            </button>
+            {players.length < 2 && (
+              <p style={{ color: 'var(--text-muted)', fontSize: '0.8rem', marginTop: '0.5rem' }}>
+                Need at least 1 more player
+              </p>
+            )}
+          </>
         )}
         {!isHost && (
           <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>Waiting for host to start…</p>
