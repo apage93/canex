@@ -133,12 +133,6 @@ export default function GamePage({ session, onLeave, onInvalidSession }: Props) 
           </div>
           <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.5rem', justifyContent: 'center' }}>
             <button
-              onClick={copyLink}
-              style={{ background: 'var(--surface2)', color: 'var(--text)', fontSize: '0.8rem', padding: '0.4rem 0.8rem' }}
-            >
-              {copied ? '✅ Copié !' : '🔗 Copier le lien'}
-            </button>
-            <button
               onClick={() => {
                 const url = `${window.location.origin}/?code=${gameState?.join_code ?? ''}`;
                 window.open(url, '_blank', 'noopener');
