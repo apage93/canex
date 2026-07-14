@@ -10,8 +10,8 @@ HTTP *and* WebSocket endpoints without any duplication.
 
 from starlette.requests import HTTPConnection
 
-from services.connection_manager import ConnectionManager
-from services.game_store import GameStore
+from app.services.connection_manager import ConnectionManager
+from app.services.game_store import GameStore
 
 
 def get_store(conn: HTTPConnection) -> GameStore:

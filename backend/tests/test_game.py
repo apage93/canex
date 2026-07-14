@@ -3,7 +3,7 @@
 import pytest
 from unittest.mock import patch
 
-from config import settings
+from app.core.config import settings
 from exceptions import (
     GameAlreadyStartedError,
     GameFullError,
@@ -12,7 +12,7 @@ from exceptions import (
     NotHostError,
     NotYourTurnError,
 )
-from models.game import BOARD, BOARD_SIZE, Game, Player
+from app.models.game import BOARD, BOARD_SIZE, Game, Player
 
 # ── Helpers ────────────────────────────────────────────────────────────────────
 
@@ -27,14 +27,14 @@ def make_game(n_players: int = 2) -> Game:
 
 def start_deterministic(game: Game, host_id: str = "alice-id") -> None:
     """Start the game without shuffling so player order is predictable."""
-    with patch("models.game.random.shuffle"):
+    with patch("app.models.game.random.shuffle"):
         game.start(host_id)
 
 
 def roll(game: Game, dice: int) -> None:
     """Roll for the current player with a fixed dice value."""
     current_id = game.players[game.current_player_index].id
-    with patch("models.game.random.randint", return_value=dice):
+    with patch("app.models.game.random.randint", return_value=dice):
         game.roll_and_play(current_id)
 
 
@@ -131,7 +131,7 @@ class TestStartGame:
 
     def test_shuffle_called(self):
         game = make_game(2)
-        with patch("models.game.random.shuffle") as mock_shuffle:
+        with patch("app.models.game.random.shuffle") as mock_shuffle:
             game.start("alice-id")
         mock_shuffle.assert_called_once_with(game.players)
 
@@ -153,7 +153,7 @@ class TestRollErrors:
     def test_raises_when_not_your_turn(self, started_game):
         # current is Alice (index 0); Bob should be rejected
         with pytest.raises(NotYourTurnError):
-            with patch("models.game.random.randint", return_value=1):
+            with patch("app.models.game.random.randint", return_value=1):
                 started_game.roll_and_play("p2-id")
 
 

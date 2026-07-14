@@ -10,14 +10,14 @@ from exceptions import (
     GameFullError,
     GameNotFoundError,
 )
-from models.schemas import (
+from app.models.schemas import (
     CreateGameRequest,
     GameStateOut,
     JoinGameRequest,
     SessionResponse,
 )
-from services.connection_manager import ConnectionManager
-from services.game_store import GameStore
+from app.services.connection_manager import ConnectionManager
+from app.services.game_store import GameStore
 
 router = APIRouter(prefix="/api/games", tags=["games"])
 

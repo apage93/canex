@@ -30,7 +30,7 @@ def ws_start(client, game_id: str, player_id: str) -> dict:
         f"/api/games/{game_id}/ws?player_id={player_id}"
     ) as ws:
         ws.receive_json()                        # discard initial state
-        with patch("models.game.random.shuffle"):
+        with patch("app.models.game.random.shuffle"):
             ws.send_json({"type": "start_game"})
             return ws.receive_json()["state"]
 

@@ -5,8 +5,8 @@ from unittest.mock import patch
 from fastapi.testclient import TestClient
 
 from main import create_app
-from models.game import Game
-from services.game_store import GameStore
+from app.models.game import Game
+from app.services.game_store import GameStore
 
 
 # ── App / HTTP client ─────────────────────────────────────────────────────────
@@ -36,7 +36,7 @@ def two_player_game() -> Game:
 @pytest.fixture
 def started_game(two_player_game: Game) -> Game:
     """Two-player game with deterministic player order (no shuffle)."""
-    with patch("models.game.random.shuffle"):
+    with patch("app.models.game.random.shuffle"):
         two_player_game.start("host-id")
     # players[0] = Alice (host), players[1] = Bob
     return two_player_game

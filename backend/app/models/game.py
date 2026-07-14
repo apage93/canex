@@ -6,7 +6,7 @@ Pure business logic — no FastAPI, no Pydantic, no I/O concerns.
 import random
 from typing import Optional
 
-from config import settings
+from app.core.config import settings
 from exceptions import (
     GameAlreadyStartedError,
     GameFullError,

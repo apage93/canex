@@ -5,7 +5,7 @@ Responsibilities kept intentionally minimal:
   • Register lifecycle hooks (lifespan)
   • Mount middleware
   • Register exception handlers
-  • Include routers
+  • Include app.routers
 
 Everything else lives in its own module.
 """
@@ -18,10 +18,10 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
 from exceptions import GameNotFoundError, MonopolyError
-from routers import games as games_router
-from routers import ws as ws_router
-from services.connection_manager import ConnectionManager
-from services.game_store import GameStore
+from app.api.routes import games as games_router
+from app.api.routes import ws as ws_router
+from app.services.connection_manager import ConnectionManager
+from app.services.game_store import GameStore
 
 
 # ── Lifespan ──────────────────────────────────────────────────────────────────

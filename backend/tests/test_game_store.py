@@ -3,7 +3,7 @@
 import pytest
 
 from exceptions import GameNotFoundError
-from services.game_store import GameStore
+from app.services.game_store import GameStore
 
 
 @pytest.fixture

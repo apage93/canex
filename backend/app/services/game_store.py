@@ -9,9 +9,9 @@ import random
 import string
 import uuid
 
-from config import settings
+from app.core.config import settings
 from exceptions import GameNotFoundError
-from models.game import Game
+from app.models.game import Game
 
 
 class GameStore:
