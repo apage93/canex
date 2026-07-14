@@ -100,7 +100,7 @@ export default function GamePage({ session, onLeave, onInvalidSession }: Props) 
               }}>
                 <span>{PLAYER_EMOJIS[idx]} {p.name}{p.id === session.player_id ? ' (you)' : ''}</span>
                 <span style={{ color: p.is_bankrupt ? 'var(--danger)' : 'var(--accent)', fontWeight: 600 }}>
-                  {p.is_bankrupt ? (p.has_quit ? '🚪 Logout' : '💸 Bankrupt') : `$${p.money.toLocaleString()}`}
+                  {p.is_bankrupt ? (p.has_quit ? '🚪 Logged out' : '💸 Bankrupt') : `$${p.money.toLocaleString()}`}
                 </span>
               </div>
             );

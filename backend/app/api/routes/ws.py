@@ -87,7 +87,7 @@ async def _handle_leave(
         if player_obj and not player_obj.is_bankrupt:
             player_obj.is_bankrupt = True
             player_obj.has_quit = True
-            game.last_action = f"{player_obj.name} logout."
+            game.last_action = f"{player_obj.name} logged out."
             game.check_last_player_wins()
         await manager.broadcast_state(game.game_id, game.to_dict())
 

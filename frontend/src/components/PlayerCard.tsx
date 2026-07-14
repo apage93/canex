@@ -55,7 +55,7 @@ export default function PlayerCard({ player, playerIndex, isCurrentTurn, isMe, b
           </div>
           {player.is_bankrupt
             ? <div style={{ fontSize: '0.78rem', color: 'var(--danger)' }}>
-                {player.has_quit ? '🚪 Logout' : '💸 Bankrupt'}
+                {player.has_quit ? '🚪 Logged out' : '💸 Bankrupt'}
               </div>
             : <div style={{ fontSize: '0.85rem', color: 'var(--accent)' }}>${player.money.toLocaleString()}</div>
           }
