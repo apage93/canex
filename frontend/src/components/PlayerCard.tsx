@@ -54,7 +54,9 @@ export default function PlayerCard({ player, playerIndex, isCurrentTurn, isMe, b
             {player.is_host && <span style={{ color: 'var(--text-muted)', fontWeight: 400, fontSize: '0.75rem', marginLeft: '0.4rem' }}>👑</span>}
           </div>
           {player.is_bankrupt
-            ? <div style={{ fontSize: '0.78rem', color: 'var(--danger)' }}>💸 Bankrupt</div>
+            ? <div style={{ fontSize: '0.78rem', color: 'var(--danger)' }}>
+                {player.has_quit ? '🚪 Logout' : '💸 Bankrupt'}
+              </div>
             : <div style={{ fontSize: '0.85rem', color: 'var(--accent)' }}>${player.money.toLocaleString()}</div>
           }
         </div>

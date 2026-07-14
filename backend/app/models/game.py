@@ -58,6 +58,7 @@ class Player:
         self.position: int = 0
         self.properties: list[int] = []
         self.is_bankrupt: bool = False
+        self.has_quit: bool = False
         self.is_host: bool = is_host
 
     def to_dict(self) -> dict:
@@ -68,6 +69,7 @@ class Player:
             "position": self.position,
             "properties": self.properties,
             "is_bankrupt": self.is_bankrupt,
+            "has_quit": self.has_quit,
             "is_host": self.is_host,
         }
 
@@ -214,6 +216,21 @@ class Game:
         return next((p for p in self.players if p.id == player_id), None)
 
     # ── Serialisation ──────────────────────────────────────────────────────────
+
+    def check_last_player_wins(self) -> bool:
+        """If only one non-bankrupt player remains, declare them the winner.
+
+        Returns True if a winner was just crowned, False otherwise.
+        """
+        if self.status != "playing":
+            return False
+        active = [p for p in self.players if not p.is_bankrupt]
+        if len(active) == 1:
+            self.winner = active[0].name
+            self.status = "finished"
+            self.last_action = f"🏆 {self.winner} wins by default!"
+            return True
+        return False
 
     def get_player(self, player_id: str) -> Optional[Player]:
         return self._find_player(player_id)

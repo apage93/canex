@@ -46,6 +46,7 @@ class PlayerOut(BaseModel):
     position: int
     properties: list[int]
     is_bankrupt: bool
+    has_quit: bool
     is_host: bool
 
 

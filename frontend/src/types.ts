@@ -14,6 +14,7 @@ export interface Player {
   position: number;
   properties: number[];
   is_bankrupt: boolean;
+  has_quit?: boolean;
   is_host: boolean;
 }
 

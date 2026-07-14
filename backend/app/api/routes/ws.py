@@ -66,6 +66,16 @@ async def game_websocket(
 
     except WebSocketDisconnect:
         manager.disconnect(game_id, websocket)
+        # If the game is in progress, mark the disconnected player as bankrupt
+        # and check if only one player remains.
+        if game.status == "playing":
+            player_obj = game.get_player(player_id)
+            if player_obj and not player_obj.is_bankrupt:
+                player_obj.is_bankrupt = True
+                player_obj.has_quit = True
+                game.last_action = f"{player_obj.name} logout."
+                game.check_last_player_wins()
+            await manager.broadcast_state(game_id, game.to_dict())
 
 
 # ── Handlers ──────────────────────────────────────────────────────────────────
