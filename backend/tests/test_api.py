@@ -120,7 +120,7 @@ class TestGetGameEndpoint:
         alice = create_game(client)
         state = client.get(f"/api/games/{alice['game_id']}").json()
         expected_keys = {"game_id", "join_code", "status", "players",
-                         "board", "last_action", "winner"}
+                         "last_action", "winner"}
         assert expected_keys <= state.keys()
 
     def test_initial_status_is_waiting(self, client):

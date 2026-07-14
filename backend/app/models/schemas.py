@@ -65,7 +65,6 @@ class GameStateOut(BaseModel):
     players: list[PlayerOut]
     current_player_index: int
     property_owners: dict[str, str]
-    board: list[SquareOut]
     last_action: str
     winner: Optional[str] = None
 

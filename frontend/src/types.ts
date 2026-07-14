@@ -24,8 +24,7 @@ export interface GameState {
   status: 'waiting' | 'playing' | 'finished';
   players: Player[];
   current_player_index: number;
-  property_owners: Record<string, string>; // squareId -> playerId
-  board: Square[];
+  property_owners: Record<string, string>;
   last_action: string;
   winner: string | null;
 }

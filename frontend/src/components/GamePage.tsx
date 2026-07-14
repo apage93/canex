@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from 'react';
-import { SessionInfo } from '../types';
+import { SessionInfo, Square } from '../types';
 import { useGameWebSocket } from '../hooks/useGameWebSocket';
 import Board from './Board';
 import PlayerCard, { PLAYER_COLORS, PLAYER_EMOJIS } from './PlayerCard';
@@ -16,6 +16,15 @@ export default function GamePage({ session, onLeave, onInvalidSession }: Props) 
     session.player_id,
     onInvalidSession,
   );
+
+  const [board, setBoard] = useState<Square[]>([]);
+
+  useEffect(() => {
+    fetch('/api/games/board')
+      .then((r) => r.json())
+      .then((data: Square[]) => setBoard(data))
+      .catch(() => {});
+  }, []);
 
   const handleLeave = useCallback(() => {
     if (gameState?.status === 'playing') {
@@ -65,7 +74,7 @@ export default function GamePage({ session, onLeave, onInvalidSession }: Props) 
     );
   }
 
-  const { status, players, current_player_index, property_owners, board, join_code, winner } = gameState;
+  const { status, players, current_player_index, property_owners, join_code, winner } = gameState;
 
   const me = players.find((p) => p.id === session.player_id);
   const currentPlayer = players[current_player_index];

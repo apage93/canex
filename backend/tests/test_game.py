@@ -12,7 +12,8 @@ from app.core.exceptions import (
     NotHostError,
     NotYourTurnError,
 )
-from app.models.game import BOARD_SIZE, Game
+from app.models.board import BOARD, BOARD_SIZE
+from app.models.game import Game
 from app.models.player import Player
 
 # ── Helpers ────────────────────────────────────────────────────────────────────

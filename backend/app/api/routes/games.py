@@ -11,15 +11,23 @@ from app.core.exceptions import (
     GameFullError,
     GameNotFoundError,
 )
+from app.models.board import BOARD, Square
 from app.models.schemas import (
     CreateGameRequest,
     GameStateOut,
     JoinGameRequest,
     LobbyGameOut,
     SessionResponse,
+    SquareOut,
 )
 
 router = APIRouter(prefix="/api/games", tags=["games"])
+
+
+@router.get("/board", response_model=list[SquareOut], tags=["board"])
+async def get_board() -> list[Square]:
+    """Return the static board definition (fetched once by the client)."""
+    return BOARD
 
 
 @router.get("", response_model=list[LobbyGameOut])
