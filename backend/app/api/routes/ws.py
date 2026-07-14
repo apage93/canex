@@ -10,7 +10,6 @@ from exceptions import (
     MonopolyError,
 )
 from app.services.connection_manager import ConnectionManager
-from app.services.game_store import GameStore
 
 router = APIRouter(tags=["websocket"])
 
@@ -57,15 +56,16 @@ async def game_websocket(
 
             msg_type: str = data.get("type", "")
 
-            if msg_type == "start_game":
-                await _handle_start(websocket, game, player_id, manager)
+            dispatch = {
+                "start_game": _handle_start,
+                "roll_dice":  _handle_roll,
+                "leave_game": _handle_leave,
+            }
 
-            elif msg_type == "roll_dice":
-                await _handle_roll(websocket, game, player_id, manager)
-
-            elif msg_type == "leave_game":
-                await _handle_leave(websocket, game, player_id, manager)
-                break
+            if handler := dispatch.get(msg_type):
+                await handler(websocket, game, player_id, manager)
+                if msg_type == "leave_game":
+                    break
 
             # Unknown message types are silently ignored (forward-compat).
 
@@ -87,7 +87,7 @@ async def _handle_leave(
         if player_obj and not player_obj.is_bankrupt:
             player_obj.is_bankrupt = True
             player_obj.has_quit = True
-            game.last_action = f"{player_obj.name} a quitté la partie."
+            game.last_action = f"{player_obj.name} logout."
             game.check_last_player_wins()
         await manager.broadcast_state(game.game_id, game.to_dict())
 
